@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function Expenses() {
+export default function ExpensesIndexPage() {
   return (
-    <div>expenses</div>
+    <h1>Expenses Index</h1>
   )
 }

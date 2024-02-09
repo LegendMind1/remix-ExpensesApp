@@ -1,6 +1,6 @@
 
-export default function ExpensesID() {
+export default function UpdateExpensesPage() {
   return (
-    <div>expenses.$id</div>
+    <h1>Update Expenses Page .$id</h1>
   )
 }

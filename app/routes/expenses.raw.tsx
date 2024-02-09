@@ -1,6 +1,4 @@
-import React from 'react'
-
-export default function ExpensesRaw() {
+export default function ExpensesRawPage() {
   return (
     <div>ExpensesRaw</div>
   )
