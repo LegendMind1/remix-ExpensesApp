@@ -1,0 +1,232 @@
+
+//==============Meta Data in each Route Page ===============================
+export const meta: MetaFunction = ({data, params}) => { // data and params Automatically get stuffed by Loader() and url params and are both optional and syntax-wise simalarly available for Action and Loader functions too. 
+    return [
+      { title: "Allah is Almighty" },
+      { name: "description", content: "Welcome to Remix!" },
+    ];
+  };
+
+
+
+  //=========================== Linking and Surfacing Stylesheets ====================
+
+  // At Component level wehere stylesheet is imported, used and exported to parent component
+  import NewNoteStyles from './NewNote.css';  
+  export const links: LinksFunction = () => {   
+    return (
+      [{ rel: 'stylesheet', href: NewNoteStyles }]
+    )
+  }
+
+
+  // At Route Page level wehere stylesheets of child components are imported and surfaced
+  import NewNote, {links as NewNoteStyles} from "~/components/NewNote";
+  import NoteList, {links as NoteListStyles} from "~/components/NoteList";  
+    
+  export const links: LinksFunction = () => {
+    return (
+      [
+        ...NewNoteStyles(),
+        ...NoteListStyles()
+      ]
+    )
+  }
+  //================================================================
+
+
+
+  // ============================Special Functions of Remix ===============================
+
+
+  // Loader Function runs on server side to load data from backend database or file
+export async function loader(){ 
+  const notes = await getStoredNotes()
+
+  //return new Response (JSON.stringify(notes), {headers: {'Content-Type': 'application/json'}})  Can also use Node's standard Response object
+ // Or we can also use shorter alternative if wanna send back reponse manually which is easier for above approach is also exposed by remix json method
+ //return json(notes) ---- it converts response data into json
+
+ return notes; // returns raw response data
+
+}
+
+The output of loader() function is read in component as:
+----------------------------------------------------------
+const notes = useLoaderData()
+
+
+
+
+
+// ========= Action Function runs on server side called in resposne to Form action='/path' setting 
+export async function action ({request}){
+  const formData = await request.formData()
+
+  // const noteData = { 
+  //   title: formData.get('title'),
+  //   content: formData.get('content'),
+  // } Instead we can use below:
+
+  const noteData:any = Object.fromEntries(formData)
+  // We can Add Validation Here
+
+  if (noteData.title.trim().length<5){
+    return ({message: "Note Title must contain more than five characters"})
+  }
+
+  await storeNotes (updatedNotes)
+
+  return redirect('/notes');
+
+}
+
+Output of action() function is read by:
+------------------------------------------
+const actionData = useActionData()
+<p>{actionData.message}</p>
+
+
+
+
+
+
+
+//========================Handling Errors=========================================
+
+
+//====================Error Boundary renders custom error at root level ==================
+  // ===== This will trigger whenever any page route has error and that page route does not contain its own error boundary
+export function ErrorBoundary(){ 
+
+  const error = useRouteError();
+
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+        <title>An error occured</title>
+      </head>
+      <body>
+        <header>
+          <MainNavigation />
+        </header>
+
+        <main className="error">
+          <h1>An error occured!</h1>
+          <p>{error.message}</p>
+          <p>Back to <Link to='/'>safety!</Link></p>
+        </main>
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
+  );
+}
+
+
+
+
+//====At Component level Error Boundary =============
+export function ErrorBoundary(){
+const error:any = useRouteError();
+
+return (
+  
+
+      <main className="error">
+        <h1>An error occured! in accessing Notes</h1>
+        <p>{error.message}</p>
+        <p>Back to <Link to='/'>safety!</Link></p>
+      </main>
+      
+);
+}
+
+This will replace <Outlet /> component in root.tsx.
+//========================================================
+
+//=== Catch Boundary behaves  same as Error Boundary at both Roo and Component level=======
+
+//---------CatchBoundary at Compoenent Level----------------
+export function CatchBoundary(){
+const error:any = useRouteError();
+
+return (
+  
+
+      <main className="error">
+        <h1>An error occured! in accessing Notes</h1>
+        <p>{error.message}</p>
+        <p>Back to <Link to='/'>safety!</Link></p>
+      </main>
+      
+);
+}
+
+//==========================================================
+
+Whenever we Throw a repsonse, like
+   // throw json({message: 'Could not find notes'}, {status: 404, statusText: 'Not found'})
+then Remix renders a different component than the ErrorBoundary called CatchBoundary
+
+
+Whenever we throw anything but a reponse like text or regular object other than above json object imported from "@remix-run/node"
+  // throw ('Hello) 
+then Remix will use ErrorBoundary() if defined in the respective route page
+
+whenever we use return then Remix will use default page component
+                                      
+                                      ***
+**
+BUT ALL F THE ABOVE DOES NOT APPLY ON REMIX v.2. Now ErrorBoundary handles all. Just use useRouteError, and  isRouteErrorResponse 
+**
+//==================================================================================
+
+
+
+
+
+// ====Special Methods to be used for consuming data exposed by Loader and Action Functions =====
+
+
+const navigation = useNavigation()  // Contains useful data about ongoing requests happening behind the scenes in remix
+const isSubmitting = navigation.state === 'submitting'   //retuens true is form is submitting to the server, will be available after action of form submission is triggered
+
+const actionData = useActionData()  //Server side function reads coming data from Form action 
+
+const notes = useLoaderData()
+
+const navigation = useNavigation() 
+
+const error = useRouteError();  // Used within ErrorBoundary function and has error.message object
+
+const navigate = useNavigate(); // This is client side Remix function to navigate between links programmativally.
+navigate ('/')
+
+
+
+import {useSearchParams} from '@remix-run/react'  // his hook is client side Remix hook which is used to access browser url params i.e. http://example.com/?abc=example
+const [searchParams, setSearchParams] = useSearchParams()
+
+setSearchParams rarely used since mostly browser already sets it and we just need to read them
+
+
+
+
+//====================Splat Routes ===================================================
+$.tsx -----> These are splat routes which can be useful when performing redirecting in cases when no other path is reached within the app, these override ErrorBoundary:
+
+import {redirect} from '@remix-run/node'
+
+export function loader({params}) {
+  if (params['*']==='exp'){
+    return redirect ('/expenses')
+  }
+  throw new Response ('Not Found', {status:404})
+}
+//=======================================================================================
