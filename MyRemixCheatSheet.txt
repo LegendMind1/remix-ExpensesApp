@@ -230,3 +230,7 @@ export function loader({params}) {
   throw new Response ('Not Found', {status:404})
 }
 //=======================================================================================
+
+******************
+While naming files if we use abc.server.tsx then .server ensures that this file's code will only be run at server side.
+******************
