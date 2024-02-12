@@ -1,9 +1,12 @@
+
+
 import { Link, useActionData } from "@remix-run/react";
+import type { believe } from "~/data/validation.server";
 
 function ExpenseForm() {
   const today = new Date().toISOString().slice(0, 10); // yields something like 2023-09-10
 
-  const validationErrors: any = useActionData()  // It will get back any info thrown by action function declared in expenses.add.tsx
+    const validationErrors: believe | undefined = useActionData()  // It will get back any info thrown by action function declared in expenses.add.tsx
 
   return (
     <form method="post" className="form" id="expense-form">
@@ -31,8 +34,9 @@ function ExpenseForm() {
       </div>
       {validationErrors && (
           <ul>
-            {Object.values(validationErrors).map((error) => (
-            <li key={error}>{error}</li>
+             
+            {Object.values(validationErrors).map((error,index) => (
+            <li key={index}>{error}</li>
             ))}
           </ul>
         )}

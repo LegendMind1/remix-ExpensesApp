@@ -1,18 +1,24 @@
-function isValidTitle(value) {
+export type believe = {
+  
+    title?: String;
+    amount?: String;
+    date?: String;
+}
+function isValidTitle(value: any) {
   return value && value.trim().length > 0 && value.trim().length <= 30;
 }
 
-function isValidAmount(value) {
+function isValidAmount(value: any) {
   const amount = parseFloat(value);
   return !isNaN(amount) && amount > 0;
 }
 
-function isValidDate(value) {
+function isValidDate(value: any) {
   return value && new Date(value).getTime() < new Date().getTime();
 }
 
-export function validateExpenseInput(input) {
-  let validationErrors = {};
+export function validateExpenseInput(input:any) {
+  let validationErrors:believe = {};
 
   if (!isValidTitle(input.title)) {
     validationErrors.title = 'Invalid expense title. Must be at most 30 characters long.'
