@@ -26,13 +26,13 @@ export async function action ({request}: any){
 
   const expenseData = Object.fromEntries(formData)
 
-  try{
-    validateExpenseInput (expenseData)
-  }
-  catch (error) {
-    return error  // This will automatically present error object to the form which was submitted instead of redirecting to page
-  }
-  await addExpense (expenseData)
+    try{
+      validateExpenseInput (expenseData)
+    }
+    catch (error) {
+      return error  // This will automatically present error object to the form which was submitted instead of redirecting to page
+    }
+    await addExpense (expenseData)
 
   return redirect('/expenses')
   // action must return something

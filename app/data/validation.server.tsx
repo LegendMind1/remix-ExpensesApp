@@ -1,8 +1,8 @@
 export type believe = {
   
-    title?: String;
-    amount?: String;
-    date?: String;
+    title?: string;
+    amount?:string;
+    date?: string;
 }
 function isValidTitle(value: any) {
   return value && value.trim().length > 0 && value.trim().length <= 30;

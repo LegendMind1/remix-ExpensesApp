@@ -195,30 +195,51 @@ BUT ALL F THE ABOVE DOES NOT APPLY ON REMIX v.2. Now ErrorBoundary handles all. 
 
 
 const navigation = useNavigation()  // Contains useful data about ongoing requests happening behind the scenes in remix
-const isSubmitting = navigation.state === 'submitting'   //retuens true is form is submitting to the server, will be available after action of form submission is triggered
+const isSubmitting = navigation.state === 'submitting'   //retuens true is form is submitting to the server, will be available after action of form submission is triggered, can be used to give visual feedback to the user in SPA (Single Page App) like so:
+
+ const navigation = useNavigation()
+ const isSubmitting = navigation.state !== 'idle'
+ ***using Form object of Remix***
+ <button disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save Expense'}</button>
+
+
 
 const actionData = useActionData()  //Server side function reads coming data from Form action 
 
 const notes = useLoaderData()
 
+const matches = useMathes() // This hook provides access to parent route's loader data
+
+const params = useParams () // This hook provide access to the browser params in child components. Route components don't need to use this as these are autmatically passed to loader/ action functions through {params} object.
+
+
 const navigation = useNavigation() 
 
 const error = useRouteError();  // Used within ErrorBoundary function and has error.message object
 
-const navigate = useNavigate(); // This is client side Remix function to navigate between links programmativally.
+const navigate = useNavigate(); // This is client side Remix function to navigate between links programmatically.
 navigate ('/')
 
 
 
-import {useSearchParams} from '@remix-run/react'  // his hook is client side Remix hook which is used to access browser url params i.e. http://example.com/?abc=example
+import {useSearchParams} from '@remix-run/react'  // This hook is client side Remix hook which is used to access browser url params i.e. http://example.com/?abc=example
 const [searchParams, setSearchParams] = useSearchParams()
-
-setSearchParams rarely used since mostly browser already sets it and we just need to read them
-
+//setSearchParams rarely used since mostly browser already sets it and we just need to read them
 
 
+const submit = useSubmit(); // This hook is triggered when manually submittiong the form after event.preventDefault() istriggered by using onSubmit even of form. This is done mostly to add client side custom checks in Remix.
 
-//====================Splat Routes ===================================================
+Example:
+submit (event.target,{
+  action: 'expenses/add',
+  method: 'post'
+})
+
+
+
+const fetch = useFetcher()  // Used when we don't want to navigate to any route after CRUD operation. This is behind the scenes equivalent of useSubmit or <Form action=''> things.
+
+//==================== Splat Routes ===================================================
 $.tsx -----> These are splat routes which can be useful when performing redirecting in cases when no other path is reached within the app, these override ErrorBoundary:
 
 import {redirect} from '@remix-run/node'

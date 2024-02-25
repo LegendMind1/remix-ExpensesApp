@@ -10,6 +10,7 @@ function ExpensesList({ expenses }: any) {
             id={expense.id}
             title={expense.title}
             amount={expense.amount}
+            date={expense.date.slice(0,10)}
           />
         </li>
       ))}
